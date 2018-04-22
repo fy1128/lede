@@ -25,7 +25,7 @@ define Package/luci-app-transparent-proxy
 	SUBMENU:=3. Applications
 	TITLE:=LuCI helper for iptables transparent proxy.
 	PKGARCH:=all
-	DEPENDS:=+iptables +ipset
+	DEPENDS:=+iptables +ipset +dnsmasq-full
 endef
 
 define Package/luci-app-transparent-proxy/description
@@ -35,6 +35,10 @@ endef
 define Build/Prepare
 	$(foreach po,$(wildcard ${CURDIR}/files/luci/i18n/*.po), \
 		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
+
+	(curl https://raw.githubusercontent.com/cokebar/openwrt-scripts/master/generate_dnsmasq_chinalist.sh -o ./files/root/usr/bin/generate_dnsmasq_chinalist.sh)
+	(curl https://raw.githubusercontent.com/cokebar/gfwlist2dnsmasq/master/gfwlist2dnsmasq.sh -o ./files/root/usr/bin/gfwlist2dnsmasq.sh)
+
 endef
 
 define Build/Configure
@@ -76,6 +80,9 @@ define Package/luci-app-transparent-proxy/install
 	$(INSTALL_BIN) ./files/root/etc/uci-defaults/luci-transparent-proxy $(1)/etc/uci-defaults/luci-transparent-proxy
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./files/root/usr/bin/transparent-proxy-rules$(2) $(1)/usr/bin/transparent-proxy-rules
+	$(INSTALL_BIN) ./files/root/usr/bin/generate_dnsmasq_chinalist.sh $(1)/usr/bin/generate_dnsmasq_chinalist.sh
+	$(INSTALL_BIN) ./files/root/usr/bin/gfwlist2dnsmasq.sh $(1)/usr/bin/gfwlist2dnsmasq.sh
+	
 endef
 
 $(eval $(call BuildPackage,luci-app-transparent-proxy))
