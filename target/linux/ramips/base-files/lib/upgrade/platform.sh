@@ -31,6 +31,7 @@ platform_check_image() {
 	awm002-evb-4M|\
 	awm002-evb-8M|\
 	bc2|\
+	bocco|\
 	broadway|\
 	c108|\
 	carambola|\
@@ -59,10 +60,9 @@ platform_check_image() {
 	ex3700|\
 	f7c027|\
 	firewrt|\
-	puppies|\
 	fonera20n|\
 	freestation5|\
-	gb-pc1|\
+	gnubee,gb-pc1|\
 	gnubee,gb-pc2|\
 	gl-mt300a|\
 	gl-mt300n|\
@@ -166,6 +166,7 @@ platform_check_image() {
 	w2914nsv2|\
 	w306r-v20|\
 	w502u|\
+	ravpower,wd03|\
 	wf-2881|\
 	whr-1166d|\
 	whr-300hp2|\
@@ -173,7 +174,8 @@ platform_check_image() {
 	whr-g300n|\
 	widora,neo-16m|\
 	widora,neo-32m|\
-	witi|\
+	mqmaker,witi-256m|\
+	mqmaker,witi-512m|\
 	wizfi630a|\
 	wl-330n|\
 	wl-330n3g|\
@@ -283,14 +285,11 @@ platform_check_image() {
 		return 0
 		;;
 	hc5962|\
-	xiaomi,miwifi-r3|\
 	mir3g|\
-	r6220b|\
-	r6220a|\
 	r6220|\
 	ubnt-erx|\
 	ubnt-erx-sfp)
-		nand_do_platform_check "${board//,/_}" "$1"
+		nand_do_platform_check "$board" "$1"
 		return $?;
 		;;
 	re350-v1)
@@ -330,10 +329,7 @@ platform_do_upgrade() {
 
 	case "$board" in
 	hc5962|\
-	xiaomi,miwifi-r3|\
 	mir3g|\
-	r6220b|\
-	r6220a|\
 	r6220|\
 	ubnt-erx|\
 	ubnt-erx-sfp)

@@ -338,17 +338,6 @@ Signed-off-by: Rajith Cherian <rajith@codeaurora.org>
  	struct tsens_sensor		sensor[0];
  };
  
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -673,7 +673,7 @@ void thermal_zone_device_unbind_exceptio
-  */
- int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
- 				     int trip,
--				     struct thermal_cooling_device *cdev,
-+					struct thermal_cooling_device *cdev,
- 				     unsigned long upper, unsigned long lower,
- 				     unsigned int weight)
- {
 --- a/drivers/thermal/thermal_sysfs.c
 +++ b/drivers/thermal/thermal_sysfs.c
 @@ -115,12 +115,48 @@ trip_point_type_show(struct device *dev,

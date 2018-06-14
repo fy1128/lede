@@ -87,7 +87,7 @@ ifneq ($(SUBTARGET),mikrotik)
 # $(4): output file.
 define MkuImage
 	mkimage -A mips -O linux -T kernel -a 0x80060000 -C $(1) $(2) \
-		-e 0x80060000 -n 'MIPS OpenWrt Linux-$(LINUX_VERSION)' \
+		-e 0x80060000 -n 'MIPS $(VERSION_DIST) Linux-$(LINUX_VERSION)' \
 		-d $(3) $(4)
 endef
 
@@ -236,6 +236,7 @@ ap136_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6336k(rootfs),1
 ap143_mtdlayout_8M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6336k(rootfs),1472k(kernel),64k(art)ro,7744k@0x50000(firmware)
 ap143_mtdlayout_16M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,14528k(rootfs),1472k(kernel),64k(art)ro,16000k@0x50000(firmware)
 ap147_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,14528k(rootfs),1472k(kernel),64k(art)ro,16000k@0x50000(firmware)
+ac9531_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,14528k(rootfs),1472k(kernel),64k(art)ro,16000k@0x50000(firmware)
 ap152_mtdlayout_16M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,14528k(rootfs),1472k(kernel),64k(art)ro,16000k@0x50000(firmware)
 bxu2000n2_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,1408k(kernel),8448k(rootfs),6016k(user),64k(cfg),64k(oem),64k(art)ro
 cameo_ap81_mtdlayout=mtdparts=spi0.0:128k(u-boot)ro,64k(config)ro,3840k(firmware),64k(art)ro
@@ -484,11 +485,11 @@ define Image/Build/Belkin
 	$(eval rootsize=$(call mtdpartsize,rootfs,$(4)))
 	$(call Sysupgrade/RKuImage,$(1),$(2),$(kernsize),$(rootsize))
 	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
-		edimax_fw_header -m $(5) -v "$(shell echo -n OpenWrt$(REVISION) | cut -c -13)" \
+		edimax_fw_header -m $(5) -v "$(shell echo -n $(VERSION_DIST)$(REVISION) | cut -c -13)" \
 			-n "uImage" \
 			-i $(KDIR_TMP)/vmlinux-$(2).uImage \
 			-o $(KDIR_TMP)/$(2)-uImage; \
-		edimax_fw_header -m $(5) -v "$(shell echo -n OpenWrt$(REVISION) | cut -c -13)" \
+		edimax_fw_header -m $(5) -v "$(shell echo -n $(VERSION_DIST)$(REVISION) | cut -c -13)" \
 			-n "rootfs" \
 			-i $(KDIR)/root.$(1) \
 			-o $(KDIR_TMP)/$(2)-rootfs; \
@@ -661,7 +662,7 @@ define Image/Build/Netgear/buildkernel
 	) > $(KDIR_TMP)/vmlinux-$(2).uImage.squashfs.tmp2
 	mkimage -A mips -O linux -T filesystem -C none -M $(5) \
 		-a 0xbf070000 -e 0xbf070000 \
-		-n 'MIPS OpenWrt Linux-$(LINUX_VERSION)' \
+		-n 'MIPS $(VERSION_DIST) Linux-$(LINUX_VERSION)' \
 		-d $(KDIR_TMP)/vmlinux-$(2).uImage.squashfs.tmp2 \
 		$(KDIR_TMP)/vmlinux-$(2).uImage.squashfs
 endef
@@ -673,7 +674,7 @@ define Image/Build/Netgear
 		for r in $(7) ; do \
 			[ -n "$$r" ] && dashr="-$$r" || dashr= ; \
 			$(STAGING_DIR_HOST)/bin/mkdniimg \
-				-B $(6) -v OpenWrt.$(REVISION) -r "$$r" $(8) \
+				-B $(6) -v $(VERSION_DIST).$(REVISION) -r "$$r" $(8) \
 				-i $(call sysupname,$(1),$(2)) \
 				-o $(call imgname,$(1),$(2))-factory$$dashr.img; \
 		done; \
@@ -714,7 +715,7 @@ define Image/Build/NetgearNAND/buildkernel
 	dd if=/dev/zero of=$(KDIR_TMP)/fakeroot-$(2) bs=131072 count=1
 	mkimage -A mips -O linux -T filesystem -C none \
 		-a 0xbf070000 -e 0xbf070000 \
-		-n 'MIPS OpenWrt fakeroot' \
+		-n 'MIPS $(VERSION_DIST) fakeroot' \
 		-d $(KDIR_TMP)/fakeroot-$(2) \
 		-M $(5) \
 		$(KDIR_TMP)/fakeroot-$(2).uImage
@@ -745,7 +746,7 @@ define Image/Build/NetgearNAND
 		dd if=$(KDIR_TMP)/$(2)-root.ubi \
 	) > $(imageraw)
 	$(STAGING_DIR_HOST)/bin/mkdniimg \
-		-B $(6) -v OpenWrt.$(REVISION) -r "$$r" $(8) \
+		-B $(6) -v $(VERSION_DIST).$(REVISION) -r "$$r" $(8) \
 		-i $(imageraw) \
 		-o $(call imgname,ubi,$(2))-factory.img
 
@@ -890,6 +891,8 @@ $(eval $(call SingleProfile,AthLzma,64k,AP136_020,ap136-020,AP136-020,ttyS0,1152
 $(eval $(call SingleProfile,AthLzma,64k,AP143_8M,ap143-8M,AP143,ttyS0,115200,$$(ap143_mtdlayout_8M),RKuImage))
 $(eval $(call SingleProfile,AthLzma,64k,AP143_16M,ap143-16M,AP143,ttyS0,115200,$$(ap143_mtdlayout_16M),RKuImage))
 $(eval $(call SingleProfile,AthLzma,64k,AP147_010,ap147-010,AP147-010,ttyS0,115200,$$(ap147_mtdlayout),RKuImage))
+$(eval $(call SingleProfile,AthLzma,64k,AC9531_010,ac9531-010,AC9531-010,ttyS0,115200,$$(ac9531_mtdlayout),RKuImage))
+$(eval $(call SingleProfile,AthLzma,64k,AC9531_020,ac9531-020,AC9531-020,ttyS0,115200,$$(ac9531_mtdlayout),RKuImage))
 $(eval $(call SingleProfile,AthLzma,64k,AP152_16M,ap152-16M,AP152,ttyS0,115200,$$(ap152_mtdlayout_16M),RKuImage))
 $(eval $(call SingleProfile,AthLzma,64k,BXU2000N2,bxu2000n-2-a1,BXU2000n-2-A1,ttyS0,115200,$$(bxu2000n2_mtdlayout),RKuImage))
 $(eval $(call SingleProfile,AthLzma,64k,CAP4200AG,cap4200ag,CAP4200AG,ttyS0,115200,$$(cap4200ag_mtdlayout),KRuImage))

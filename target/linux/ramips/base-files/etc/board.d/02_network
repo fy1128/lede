@@ -44,6 +44,7 @@ ramips_setup_interfaces()
 	all0256n-8M|\
 	all5002|\
 	all5003|\
+	bocco|\
 	broadway|\
 	dcs-930|\
 	dcs-930l-b1|\
@@ -85,7 +86,6 @@ ramips_setup_interfaces()
 	dlink,dwr-921-c1|\
 	ew1200|\
 	firewrt|\
-	puppies|\
 	hc5661a|\
 	hc5962|\
 	hlk-rm04|\
@@ -106,8 +106,6 @@ ramips_setup_interfaces()
 	pbr-m1|\
 	psg1208|\
 	psg1218a|\
-	r6220b|\
-	r6220a|\
 	r6220|\
 	rt-n12p|\
 	sap-g3200u3|\
@@ -116,7 +114,8 @@ ramips_setup_interfaces()
 	vr500|\
 	wf-2881|\
 	whr-g300n|\
-	witi|\
+	mqmaker,witi-256m|\
+	mqmaker,witi-512m|\
 	wl-wn575a3|\
 	wndr3700v5|\
 	youku-yk1|\
@@ -152,10 +151,6 @@ ramips_setup_interfaces()
 	wn3000rpv3|\
 	wrh-300cr)
 		ucidef_set_interface_lan "eth0"
-		;;
-	xiaomi,miwifi-r3)
-		ucidef_add_switch "switch0" \
-			"1:lan" "4:lan" "0:wan" "6@eth0"
 		;;
 	mir3g)
 		ucidef_add_switch "switch0" \
@@ -215,6 +210,7 @@ ramips_setup_interfaces()
 	ubnt-erx|\
 	ubnt-erx-sfp|\
 	ur-326n4g|\
+	ravpower,wd03|\
 	wrtnode|\
 	wrtnode2p | \
 	wrtnode2r | \
@@ -232,7 +228,7 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"1:lan:4" "2:lan:3" "3:lan:2" "4:lan:1" "0:wan" "6@eth0"
 		;;
-	gb-pc1|\
+	gnubee,gb-pc1|\
 	gnubee,gb-pc2)
 		ucidef_add_switch "switch0" \
 			"0:lan" "4:lan" "6@eth0"
@@ -478,9 +474,7 @@ ramips_setup_macs()
 		;;
 	mir3g)
 		lan_mac=$(mtd_get_mac_binary Factory 0xe006)
-		wan_mac=$(macaddr_setbit_la "$lan_mac")
 		;;
-	xiaomi,miwifi-r3|\
 	miwifi-mini)
 		wan_mac=$(cat /sys/class/net/eth0/address)
 		lan_mac=$(macaddr_setbit_la "$wan_mac")
@@ -506,8 +500,6 @@ ramips_setup_macs()
 		lan_mac=$(mtd_get_mac_binary factory 40)
 		wan_mac=$(mtd_get_mac_binary factory 46)
 		;;
-	r6220b|\
-	r6220a|\
 	r6220)
 		wan_mac=$(mtd_get_mac_binary factory 4)
 		lan_mac=$(macaddr_add "$wan_mac" 1)
