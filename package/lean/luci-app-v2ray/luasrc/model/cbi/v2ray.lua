@@ -54,32 +54,32 @@ end
 safe_dns_tcp = s:taboption("basic",Flag, "safe_dns_tcp", translate("DNS uses TCP"),
 	translate("Through the server transfer mode inquires DNS pollution prevention (Safer and recommended)"))
 safe_dns_tcp.rmempty = false
--- safe_dns_tcp:depends("more", "1")
+safe_dns_tcp:depends("more", "1")
 
--- more_opt = s:taboption("basic",Flag, "more", translate("More Options"),
--- 	translate("Options for advanced users"))
+more_opt = s:taboption("basic",Flag, "more", translate("More Options"),
+	translate("Options for advanced users"))
 
--- timeout = s:taboption("basic",Value, "timeout", translate("Timeout"))
--- timeout.datatype = "range(0,10000)"
--- timeout.placeholder = "60"
--- timeout.optional = false
--- timeout:depends("more", "1")
+timeout = s:taboption("basic",Value, "timeout", translate("Timeout"))
+timeout.datatype = "range(0,10000)"
+timeout.placeholder = "60"
+timeout.optional = false
+timeout:depends("more", "1")
 
--- safe_dns = s:taboption("basic",Value, "safe_dns", translate("Safe DNS"),
--- 	translate("8.8.8.8 or 8.8.4.4 is recommended"))
--- safe_dns.datatype = "ip4addr"
--- safe_dns.optional = false
--- safe_dns:depends("more", "1")
+safe_dns = s:taboption("basic",Value, "safe_dns", translate("Safe DNS"),
+	translate("8.8.8.8 or 8.8.4.4 is recommended"))
+safe_dns.datatype = "ip4addr"
+safe_dns.optional = false
+safe_dns:depends("more", "1")
 
--- safe_dns_port = s:taboption("basic",Value, "safe_dns_port", translate("Safe DNS Port"),
--- 	translate("Foreign DNS on UDP port 53 might be polluted"))
--- safe_dns_port.datatype = "range(1,65535)"
--- safe_dns_port.placeholder = "53"
--- safe_dns_port.optional = false
--- safe_dns_port:depends("more", "1")
+safe_dns_port = s:taboption("basic",Value, "safe_dns_port", translate("Safe DNS Port"),
+	translate("Foreign DNS on UDP port 53 might be polluted"))
+safe_dns_port.datatype = "range(1,65535)"
+safe_dns_port.placeholder = "53"
+safe_dns_port.optional = false
+safe_dns_port:depends("more", "1")
 
---fast_open =s:taboption("basic",Flag, "fast_open", translate("TCP Fast Open"),
---	translate("Enable TCP fast open, only available on kernel > 3.7.0"))
+fast_open =s:taboption("basic",Flag, "fast_open", translate("TCP Fast Open"),
+	translate("Enable TCP fast open, only available on kernel > 3.7.0"))
 
 
 
