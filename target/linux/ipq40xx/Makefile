@@ -17,6 +17,6 @@ DEFAULT_PACKAGES += \
 	kmod-leds-gpio kmod-gpio-button-hotplug swconfig \
 	kmod-ath10k wpad-mini \
 	kmod-usb3 kmod-usb-dwc3-of-simple kmod-usb-phy-qcom-dwc3 \
-	ath10k-firmware-qca4019
+	ath10k-firmware-qca4019 autosamba
 
 $(eval $(call BuildTarget))
