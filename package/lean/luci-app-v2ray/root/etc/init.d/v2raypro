@@ -94,7 +94,7 @@ start()
 	###### Anti-pollution configuration ######
 	if [ -n "$vt_safe_dns" ]; then
 		if [ "$vt_safe_dns_tcp" = 1 ]; then
-			start_pdnsd "$vt_safe_dns" "$vt_safe_dns_port"
+			start_pdnsd "$vt_safe_dns"
 			awk -vs="127.0.0.1#$PDNSD_LOCAL_PORT" '!/^$/&&!/^#/{printf("server=/%s/%s\n",$0,s)}' \
 				/etc/gfwlist/$vt_gfwlist > /var/etc/dnsmasq-go.d/01-pollution.conf
 		else
@@ -170,17 +170,9 @@ reload()
 	KEEP_GFWLIST=Y
 	del_rule
 	add_rule
-	case "$vt_proxy_mode" in
-		M|S|G)
-			[ -z "$vt_safe_dns" ] && vt_safe_dns="8.8.8.8"
-			;;
-	esac
-	if [ -n "$vt_safe_dns" ]; then
-		if [ "$vt_safe_dns_tcp" = 1 ]; then
-			[ -z "$vt_safe_dns_port" ] && vt_safe_dns_port=53
-			stop_pdnsd
-			start_pdnsd "$vt_safe_dns" "$vt_safe_dns_port"
-		fi
+	if [ "$vt_safe_dns_tcp" = 1 ]; then
+    stop_pdnsd
+    start_pdnsd
 	fi
 }
 
@@ -188,9 +180,9 @@ reload()
 start_pdnsd()
 {
 	local safe_dns="$1"
-	local safe_dns_port="$2"
 
 	local tcp_dns_list="208.67.222.222, 208.67.220.220"
+	[ -n "$safe_dns" ] && tcp_dns_list="$safe_dns,$tcp_dns_list"
 
 	#killall -9 pdnsd 2>/dev/null && sleep 1
 	kill -9 $(cat /var/run/pdnsd.pid) >/dev/null 2>&1
@@ -220,15 +212,6 @@ global {
 }
 server {
 	label= "fwxxx";
-	ip = $safe_dns;
-	port = $safe_dns_port;
-	timeout=6;
-	uptest=none;
-	interval=10m;
-	purge_cache=off;
-}
-server {
-	label= "fwyyy";
 	ip = $tcp_dns_list;
 	port = 53;
 	timeout=6;
