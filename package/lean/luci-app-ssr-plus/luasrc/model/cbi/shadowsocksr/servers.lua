@@ -33,7 +33,7 @@ o = s:option(Button,"update",translate("Update"))
 o.inputstyle = "reload"
 o.write = function()
   luci.sys.call("nohup bash /usr/share/shadowsocksr/subscribe.sh > /tmp/subupdate.log 2>&1 &")
-  luci.sys.call("sleep 5")
+  luci.sys.call("sleep 8")
   luci.http.redirect(luci.dispatcher.build_url("admin", "services", "shadowsocksr", "servers"))
 end
 
@@ -68,9 +68,13 @@ function o.cfgvalue(...)
 	return Value.cfgvalue(...) or "?"
 end
 
+if nixio.fs.access("/usr/bin/ssr-kcptun") then
+
 o = s:option(DummyValue, "kcp_enable", translate("KcpTun"))
 function o.cfgvalue(...)
 	return Value.cfgvalue(...) or "?"
+end
+
 end
 
 o = s:option(DummyValue, "switch_enable", translate("Auto Switch"))

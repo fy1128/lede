@@ -183,12 +183,14 @@ start_pdnsd() {
 	local tcp_dns_list="208.67.222.222, 208.67.220.220"
 	[ -z "$usr_dns" ] && usr_dns="8.8.8.8"
 	[ -z "$usr_port" ] && usr_port="53"
-	mkdir -p /var/etc /var/pdnsd
-	
-  if ! test -f "/var/pdnsd/pdnsd.cache"; then
-	dd if=/dev/zero of="/var/pdnsd/pdnsd.cache" bs=1 count=4 2> /dev/null
-	chown -R nobody.nogroup /var/pdnsd
-	fi
+
+  [ -d /var/etc ] || mkdir -p /var/etc
+
+   if [ ! -d /var/pdnsd ];then
+       mkdir -p /var/pdnsd
+       echo -ne "pd13\000\000\000\000" >/var/pdnsd/pdnsd.cache
+       chown -R nobody:nogroup /var/pdnsd
+   fi
 	
 	cat > /var/etc/pdnsd.conf <<EOF
 global {
@@ -197,7 +199,7 @@ global {
 	pid_file = /var/run/pdnsd.pid;
 	run_as="nobody";
 	server_ip = 127.0.0.1;
-	server_port = 5353;
+	server_port = 5335;
 	status_ctl = on;
 	query_method = tcp_only;
 	min_ttl=1h;
@@ -238,7 +240,7 @@ start_tunnel() {
 
 	local local_dns_port=$(uci_get_by_type global tunnel_port)
 	if [ "$run_mode" = "gfw" ] ;then
-		local_dns_port=5353
+		local_dns_port=5335
 	fi
 
 	/usr/bin/ssr-tunnel \
@@ -453,7 +455,7 @@ EOF
 }
 
 boot() {
-	(sleep 5 && start >/dev/null 2>&1) &
+	(/usr/share/shadowsocksr/chinaipset.sh && sleep 5 && start >/dev/null 2>&1) &
 }
 
 stop() {
@@ -465,14 +467,14 @@ stop() {
 	iptables -X SSR-SERVER-RULE 2>/dev/null
 	fi
 	if [ -z "$switch_server" ] ;then
-	killall -q -9 ssr-switch
+    kill -9 $(ps | grep ssr-switch | grep -v grep | awk '{print $1}') >/dev/null 2>&1
 	fi
 	killall -q -9 ssr-redir
 	killall -q -9 ssr-tunnel
 	killall -q -9 ssr-server
 	killall -q -9 ssr-kcptun
 	killall -q -9 ssr-local
-	kill $(cat /var/run/pdnsd.pid) >/dev/null 2>&1 || killall -9 pdnsd >/dev/null 2>&1 
+	kill $(cat /var/run/pdnsd.pid) >/dev/null 2>&1 || kill -9 $(ps | grep pdnsd | grep -v grep | awk '{print $1}') >/dev/null 2>&1 
 	
 	if [ -f "/tmp/dnsmasq.d/dnsmasq-ssr.conf" ]; then
 		rm -f /tmp/dnsmasq.d/dnsmasq-ssr.conf
